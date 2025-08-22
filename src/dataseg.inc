@@ -8,3 +8,11 @@ caption:
     db "Mini-PE", 0
 buffer:
     db "0000000000", 0
+
+file_name:
+    db "default.prg", 0
+file_exists:
+    db "file exists.", 0
+file_not_exists:
+    db "file does not exists.", 0
+    

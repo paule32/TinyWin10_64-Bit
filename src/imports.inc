@@ -1,15 +1,15 @@
 ; Import-Tabelle --- Hint/Names ---
-HINTNAME printf, MessageBoxA, ExitProcess
+HINTNAME printf, ExitProcess, MessageBoxA, GetFileAttributesA, GetStdHandle, WriteConsoleA
 
 ; --- INTs (Import Name Table, 64-bit Thunks) ---
 INT_TABLE msvcrt, printf
 INT_TABLE user32, MessageBoxA
-INT_TABLE kernel32, ExitProcess
+INT_TABLE kernel32, ExitProcess, GetFileAttributesA, GetStdHandle, WriteConsoleA
 
 ; --- IATs (werden vom Loader gepatcht) ---
 IAT_TABLE msvcrt, printf
 IAT_TABLE user32, MessageBoxA
-IAT_TABLE kernel32, ExitProcess
+IAT_TABLE kernel32, ExitProcess, GetFileAttributesA, GetStdHandle, WriteConsoleA
 
 ; --- DLL-Namen ---
 IMPORT_DLL msvcrt

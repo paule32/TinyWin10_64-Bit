@@ -56,4 +56,18 @@ IntToStr:
 .done:
     FUNC_LEAVE
 
+;--------------------------------------
+; Hilfsfunktion: strlen
+; RCX = string
+;--------------------------------------
+strlen:
+    xor     rax, rax
+.next_char:
+    cmp     byte [rcx+rax], 0
+    je      .done
+    inc     rax
+    jmp     .next_char
+.done:
+    ret
+
 %include 'windos.inc'
