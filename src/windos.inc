@@ -1,3 +1,10 @@
+;---------------------------------------------------
+; \file  windos.inc
+; \note  (c) 2025 by Jens Kallup - paule32
+;        all rights reserved.
+;
+; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
+;---------------------------------------------------
 print_string:
     ; RCX = pointer auf String
     push    rcx

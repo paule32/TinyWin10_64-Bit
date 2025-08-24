@@ -1,3 +1,13 @@
+;---------------------------------------------------
+; \file  macros.inc
+; \note  (c) 2025 by Jens Kallup - paule32
+;        all rights reserved.
+;
+; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
+;---------------------------------------------------
+%define META_SIG 'PBT0'     ; 4-Byte Signatur für den Builder
+%define META_VER 1
+
 ; Makro: pad_align alignment
 ; Füllt mit Nullen bis zur nächsten alignment-Grenze
 %macro pad_align 1

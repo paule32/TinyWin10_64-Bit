@@ -1,3 +1,11 @@
+;---------------------------------------------------
+; \file  imports.inc
+; \note  (c) 2025 by Jens Kallup - paule32
+;        all rights reserved.
+;
+; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
+;---------------------------------------------------
+
 ; Import-Tabelle --- Hint/Names ---
 HINTNAME printf, ExitProcess, MessageBoxA, GetFileAttributesA, GetStdHandle, WriteConsoleA
 
@@ -16,7 +24,7 @@ IMPORT_DLL msvcrt
 IMPORT_DLL user32
 IMPORT_DLL kernel32
 
-align 8
+;align 8
 IMPORT_DESC msvcrt
 IMPORT_DESC user32
 IMPORT_DESC kernel32

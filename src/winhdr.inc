@@ -1,4 +1,12 @@
 ;---------------------------------------------------
+; \file  winhdr.inc
+; \note  (c) 2025 by Jens Kallup - paule32
+;        all rights reserved.
+;
+; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
+;---------------------------------------------------
+
+;---------------------------------------------------
 ; NT-Header
 ;---------------------------------------------------
 
@@ -30,7 +38,7 @@ pe_header:
     dd 0x2000                           ; SizeOfImage (Header + 1 Section)
     dd 0x200                            ; SizeOfHeaders
     dd 0                                ; CheckSum
-    dw 3                                ; Subsystem = CUI
+    dw 3                                ; Subsystem 3 = CUI, 2 = GUI
     dw 0                                ; DllCharacteristics
     dq 0x100000                         ; SizeOfStackReserve
     dq 0x1000                           ; SizeOfStackCommit
@@ -41,18 +49,18 @@ pe_header:
 
     ; Data Directories
     dd 0,0                              ; Export
-    dd import_rva, import_size           ; Import
-    times 14*8 db 0                      ; Rest leer
+    dd import_rva, import_size          ; Import
+    times 14*8 db 0                     ; Rest leer
 
     ; Section Header (.text)
-    db '.text',0,0,0                     ; Name
-    dd 0x200                             ; VirtualSize
-    dd 0x1000                            ; VirtualAddress
-    dd text_raw_size                     ; SizeOfRawData
-    dd 0x200                             ; PointerToRawData
-    dd 0,0                               ; Reloc/Linenum
+    db '.text',0,0,0                    ; Name
+    dd 0x200                            ; VirtualSize
+    dd 0x1000                           ; VirtualAddress
+    dd text_raw_size                    ; SizeOfRawData
+    dd 0x200                            ; PointerToRawData
+    dd 0,0                              ; Reloc/Linenum
     dw 0,0
-    dd 0xE0000020                        ; Characteristics: CODE|EXEC|READ|WRITE
+    dd 0xE0000020                       ; Characteristics: CODE|EXEC|READ|WRITE
 
 ;---------------------------------------------------
 ; Align bis zum Section-Start (0x200)

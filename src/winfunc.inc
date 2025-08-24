@@ -1,7 +1,11 @@
+;---------------------------------------------------
+; \file  winfunc.inc
+; \note  (c) 2025 by Jens Kallup - paule32
+;        all rights reserved.
+;
+; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
+;---------------------------------------------------
 %macro FUNC 1-*
-    %defstr _error_0001 "argument underflow (not enough args)."
-    %defstr _error_0002 "too many arguments."
-    
     %ifidn %1, ExitProcess
         %if %0 < 2
             %error _error_0001
@@ -23,8 +27,8 @@
             mov     rcx, %2                 ; hWnd = NULL
             lea     rdx, [rel %3]           ; Text
             lea     r8,  [rel %4]           ; Caption
-            mov     r9d, %5                 ; uType = MB_OK
-            RELCALL MessageBoxA
+            mov     r9,  %5                 ; uType = MB_OK
+            RELCALL %1
         %endif
         
     %elifidn %1, printf

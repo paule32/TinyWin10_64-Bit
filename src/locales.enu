@@ -1,15 +1,10 @@
 ;---------------------------------------------------
-; \file  dataseg.inc
+; \file  locales.enu
 ; \note  (c) 2025 by Jens Kallup - paule32
 ;        all rights reserved.
 ;
 ; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
 ;---------------------------------------------------
-entry_rva equ entry - section_start + 0x1000
 
-msg:
-    db " Hello Tiny PE32+ (Win10 x64) OK", 10, 0
-caption:
-    db "Mini-PE", 0
-buffer:
-    db "0000000000", 0
+%defstr _error_0001 "argument underflow (not enough args)."
+%defstr _error_0002 "too many arguments."
