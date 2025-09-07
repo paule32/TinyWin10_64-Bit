@@ -20,5 +20,6 @@
 %endmacro
 
 %macro RELCALL 1
-    call qword [rel iat_%+%1]
+    mov  rax, IMAGE_BASE + RVA_IDATA(IAT_%+%1)
+    call qword [rax]
 %endmacro

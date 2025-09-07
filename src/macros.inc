@@ -5,8 +5,6 @@
 ;
 ; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
 ;---------------------------------------------------
-%define META_SIG 'PBT0'     ; 4-Byte Signatur für den Builder
-%define META_VER 1
 
 ; Makro: pad_align alignment
 ; Füllt mit Nullen bis zur nächsten alignment-Grenze
