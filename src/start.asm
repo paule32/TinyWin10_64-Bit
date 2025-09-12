@@ -10,12 +10,13 @@
 %include 'winfunc.inc'
 %include 'usefunc.inc'
 
+%include 'macros.inc'
+
 ; -----------------------------------------------------------------------------
-; DOS-Header (minimal)
+; DOS and PE-Header
 ; -----------------------------------------------------------------------------
 %include 'doshdr.inc'
 %include 'winhdr.inc'
-%include 'macros.inc'
 
 ; -----------------------------------------------------------------------------
 ; .text (Code)
@@ -30,3 +31,6 @@ section_text_end:
 
 %include 'imports.asm'
 %include 'data64.asm'
+
+; -----------------------------------------------------------------------------
+file_end:

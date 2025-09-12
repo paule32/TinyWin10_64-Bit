@@ -42,7 +42,7 @@ WndProc:
     mov     r8,  rax              ; HBRUSH
     CALL_IAT FillRect
     
-    mov     eax, 1                ; true flag => paint ok.
+    Return 1                      ; true flag => paint ok.
     
     DelShadow 48
     DelShadow

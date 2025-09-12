@@ -7,4 +7,4 @@
 :: ----------------------------------------------------------------------------
 @echo on
 nasm -f bin -o start.exe start.asm
-python time_patch.py start.exe --recalc-checksum -v
+::python time_patch.py start.exe --recalc-checksum -v

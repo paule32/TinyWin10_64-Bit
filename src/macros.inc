@@ -126,3 +126,7 @@ __DIR %+ _end:
     dw 0
 %pop
 %endmacro
+
+%macro Return 1
+    mov eax, %1
+%endmacro

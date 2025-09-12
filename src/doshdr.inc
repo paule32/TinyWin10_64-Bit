@@ -14,7 +14,7 @@ org 0
 ; Größen des reinen Stubs (Header+Code) – 'stub_end'
 ; steht ganz unten
 ;---------------------------------------------------
-%define STUB_SIZE   (stub_end - $$)
+%define STUB_SIZE   (file_end - $$)
 %define STUB_PAGES  ((STUB_SIZE + 511) / 512)
 %define STUB_LAST   (STUB_SIZE % 512)   ; 0 => "512"
 %define HDR_PARAS   (((mz_image - $$) + 15) / 16)
@@ -28,7 +28,7 @@ dos_start:
     dw 0                      ; e_minalloc
     dw 0xFFFF                 ; e_maxalloc (so viel wie möglich)
     dw 0                      ; e_ss
-    dw 0xFFFE                 ; e_sp (kleiner Stack)
+    dw 0x00CE                 ; e_sp (kleiner Stack)
     dw 0                      ; e_csum
     dw 0                      ; e_ip  (Code startet bei 0 im Image)
     dw 0                      ; e_cs
@@ -46,7 +46,7 @@ mz_reloc:                     ; (keine Einträge)
     times ((16 - (($ - $$) & 15)) & 15) db 0
 
 mz_image:
-;%include 'code16.inc'
-;%include 'data16.inc'
+%include 'code16.asm'
+%include 'data16.inc'
 
 stub_end:

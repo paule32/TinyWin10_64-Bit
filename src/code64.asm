@@ -35,7 +35,7 @@ _start:
     lea     rsi, [rdi + 80]      ; rsi -> MSG
     
     ; hInstance = GetModuleHandleW(NULL)
-    xor     ecx, ecx
+    Zero    ecx
     CALL_IAT GetModuleHandleW
     mov     r12, rax              ; hInstance in r12 behalten
 
@@ -78,7 +78,7 @@ _start:
 
 .class_ok:
     ; CreateWindowExW(0, class, title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,...)
-    xor     ecx, ecx                           ; dwExStyle = 0
+    Zero    ecx                                ; dwExStyle = 0
     lea     rdx, [rel winclassW]               ; lpClassName
     lea     r8,  [rel titleW]                  ; lpWindowName
     mov     r9d, WS_OVERLAPPEDWINDOW           ; dwStyle
@@ -107,7 +107,7 @@ _start:
     
     TranslateMessage
     DispatchMessageW
-    jmp     .msg_loop
+    jmp .msg_loop
 
 .exit:
     ExitProcess 0

@@ -1,10 +1,10 @@
-;---------------------------------------------------
-; \file  code16.inc
+; -----------------------------------------------------------------------------
+; \file  code16.asm
 ; \note  (c) 2025 by Jens Kallup - paule32
 ;        all rights reserved.
 ;
 ; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
-;---------------------------------------------------
+; -----------------------------------------------------------------------------
     ; AX=1600h: Windows-Check
     mov ax, 0x1600
     int 0x2F
@@ -24,4 +24,4 @@
     mov  ax, 0x4C00           ; ExitCode=0
     int  0x21
 
-msg2:    db "Dieses Programm erfordert Windows.",13,10,"$",0
+msg2:    db "This program requieres MS-Windows.",13,10,"$",0

@@ -15,18 +15,19 @@ pe_header:
     ; COFF
     dw 0x8664                      ; AMD64
     dw 3                           ; Sections: .text, .idata, .data
-    dd 0,0,0
+    dd 0                           ; Time Date Stamp
+    dd 0,0
     dw 0x00F0                      ; SizeOfOptionalHeader (PE32+)
-    dw 0x0022                      ; EXECUTABLE|LAA  (Relocs stripped lassen wir weg)
+    dw 0x0002                      ; EXECUTABLE|LAA  (Relocs stripped lassen wir weg)
 
 %include 'precalc.asm'
 
     ; Optional Header (PE32+)
-    dw 0x020B                      ; Magic
-    db 0,0
-    dd TEXT_RAW_SIZE               ; SizeOfCode
-    dd IDATA_RAW_SIZE + DATA_RAW_SIZE ; SizeOfInitializedData
-    dd 0                           ; BSS
+    dw 0x020B                      ; Magic: 64-bit
+    db 1,0                         ; LinkerVersion (dummy)
+    dd TEXT_RAW_SIZE               ; SizeOfCode .text
+    dd IDATA_RAW_SIZE + DATA_RAW_SIZE ; SizeOfInitializedData .idata + .data
+    dd 0                           ; BSS .bss
     dd RVA_TEXT(_start)            ; EntryPoint
     dd TEXT_VA                     ; BaseOfCode
     dq IMAGE_BASE                  ; ImageBase
@@ -40,11 +41,9 @@ pe_header:
     dd SIZEOF_HEADERS              ; SizeOfHeaders
     dd 0                           ; Checksum
     dw 2                           ; Subsystem = Windows GUI
-    dw 0x0100                      ; DllCharacteristics: NXCompat (kein ASLR)
-    dq 0x0000000000100000          ; Stack Reserve
-    dq 0x0000000000001000          ; Stack Commit
-    dq 0x0000000000100000          ; Heap Reserve
-    dq 0x0000000000001000          ; Heap Commit
+    dw 0x0000                      ; DllCharacteristics: NXCompat (kein ASLR)
+    dq 0x100000, 0x1000            ; Stack Reserve, Stack Commit
+    dq 0x100000, 0x1000            ; Heap  Reserve, Heap  Commit
     dd 0
     dd 16
 
