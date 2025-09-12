@@ -19,7 +19,7 @@
 ; -----------------------------------------------------------------------------
 %macro DispatchMessageW 0
     mov     rcx, rsi
-    CALL_IAT win32_DispatchMessageW
+    CALL_IAT DispatchMessageW
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -30,11 +30,11 @@
 ; -----------------------------------------------------------------------------
 %macro ExitProcess 0-1 0
     nop
-    sub     rsp, (32 + 16)           ; Shadow Space + 16B Align
+    AddShadow (32 + 16)           ; Shadow Space + 16B Align
     mov     ecx,%1
-    CALL_IAT win32_ExitProcess
+    CALL_IAT ExitProcess
     ; no return
-    add     rsp, (32 + 16)
+    DelShadow (32 + 16)
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -49,18 +49,18 @@
     %1      %2
 %endmacro
 %macro GetLastError 0
-    CALL_IAT win32_GetLastError
+    CALL_IAT GetLastError
 %endmacro
 
 ; -----------------------------------------------------------------------------
 ; \brief  GetMessageW
 ; -----------------------------------------------------------------------------
 %macro GetMessageW 0
-    mov     rcx, rsi
-    xor     edx, edx
-    xor     r8d, r8d
-    xor     r9d, r9d
-    CALL_IAT win32_GetMessageW
+    mov  rcx, rsi
+    Zero edx
+    Zero r8d
+    Zero r9d
+    CALL_IAT GetMessageW
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -69,9 +69,9 @@
 ; \param  id - integer: resource id
 ; -----------------------------------------------------------------------------
 %macro LoadCursorW 1
-    xor     ecx, ecx
-    mov     edx, %1
-    CALL_IAT win32_LoadCursorW
+    Zero ecx
+    mov  edx, %1
+    CALL_IAT LoadCursorW
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -94,7 +94,7 @@
 ; \param mb_flags  -> optional ( r9d ), default: 0 (MB_OK)
 ; -----------------------------------------------------------------------------
 %macro ShowMessageW 2-3
-    xor     ecx, ecx                            ; hWnd = NULL
+    Zero    ecx                                 ; hWnd = NULL
     mov     rdx, (IMAGE_BASE + RVA_DATA(%1))    ; lpText
     mov     r8,  (IMAGE_BASE + RVA_DATA(%2))    ; lpCaption    
 %if %0 == 2                                     ; %0 = argument count
@@ -102,7 +102,7 @@
 %else
     mov     r9d, %3                             ; uType = argument exists
 %endif
-    CALL_IAT win32_MessageBoxW
+    CALL_IAT MessageBoxW
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -117,7 +117,7 @@
 ; \param mb_flags  -> optional ( r9d ), default: 0 (MB_OK)
 ; -----------------------------------------------------------------------------
 %macro ShowMessageA 2-3
-    xor     ecx, ecx
+    Zero    ecx
     mov     rdx, IMAGE_BASE + RVA_DATA(%1)      ; "MessageBoxW failed"
     mov     r8,  IMAGE_BASE + RVA_DATA(%2)      ; "User32"
 %if %0 == 2                                     ; %0 = argument count
@@ -125,7 +125,7 @@
 %else
     mov     r9d, %3                             ; uType = argument exists
 %endif
-    CALL_IAT win32_MessageBoxA
+    CALL_IAT MessageBoxA
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -136,15 +136,15 @@
 ; -----------------------------------------------------------------------------
 %macro ShowWindow 1-2
     nop
-    sub     rsp, (32 + 16)           ; Shadow Space + 16B Align
+    AddShadow (32 + 16)           ; Shadow Space + 16B Align
     mov     rcx, %1
 %if %0 == 2
     mov     edx, %2
 %else
     mov     edx, SW_SHOWDEFAULT
 %endif
-    CALL_IAT win32_ShowWindow
-    add     rsp, (32 + 16)
+    CALL_IAT ShowWindow
+    DelShadow (32 + 16)
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -153,7 +153,7 @@
 ; -----------------------------------------------------------------------------
 %macro TranslateMessage 0
     mov     rcx, rsi
-    CALL_IAT win32_TranslateMessage
+    CALL_IAT TranslateMessage
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -167,22 +167,5 @@
 ; -----------------------------------------------------------------------------
 %macro UpdateWindow 1
     mov     rcx, %1
-    CALL_IAT win32_UpdateWindow
+    CALL_IAT UpdateWindow
 %endmacro
-    
-; -----------------------------------------------------------------------------
-; user32.dll functions ...
-; -----------------------------------------------------------------------------
-%define USER32_FUNCS \
-    RegisterClassExW, CreateWindowExW, DefWindowProcW, \
-    ShowWindow, UpdateWindow, GetMessageW, TranslateMessage, \
-    DispatchMessageW, PostQuitMessage, LoadCursorW, \
-    MessageBoxA, MessageBoxW, GetSysColorBrush, \
-    GetClassLongPtrW, GetClientRect, FillRect
-; -----------------------------------------------------------------------------
-; kernel32.dll functions ...
-; -----------------------------------------------------------------------------
-%define KERNEL32_FUNCS \
-    ExitProcess, \
-    GetModuleHandleW, \
-    GetLastError

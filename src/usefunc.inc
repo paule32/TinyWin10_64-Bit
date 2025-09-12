@@ -1,32 +1,24 @@
 ; -----------------------------------------------------------------------------
-; \file  start.asm
+; \file  usefunc.inc
 ; \note  (c) 2025 by Jens Kallup - paule32
 ;        all rights reserved.
 ;
 ; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
 ; -----------------------------------------------------------------------------
-%include 'basexx.inc'
-%include 'windows.inc'
-%include 'winfunc.inc'
-%include 'usefunc.inc'
 
 ; -----------------------------------------------------------------------------
-; DOS-Header (minimal)
+; user32.dll functions ...
 ; -----------------------------------------------------------------------------
-%include 'doshdr.inc'
-%include 'winhdr.inc'
-%include 'macros.inc'
-
+%define USER32_FUNCS \
+    RegisterClassExW, CreateWindowExW, DefWindowProcW, \
+    ShowWindow, UpdateWindow, GetMessageW, TranslateMessage, \
+    DispatchMessageW, PostQuitMessage, LoadCursorW, \
+    MessageBoxA, MessageBoxW, GetSysColorBrush, \
+    GetClassLongPtrW, GetClientRect, FillRect
 ; -----------------------------------------------------------------------------
-; .text (Code)
+; kernel32.dll functions ...
 ; -----------------------------------------------------------------------------
-    times (TEXT_RAW_PTR - ($ - $$)) db 0
-section_text_start:
-
-%include 'winproc.asm'
-%include 'code64.asm'
-
-section_text_end:
-
-%include 'imports.asm'
-%include 'data64.asm'
+%define KERNEL32_FUNCS \
+    ExitProcess, \
+    GetModuleHandleW, \
+    GetLastError

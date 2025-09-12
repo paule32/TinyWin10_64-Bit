@@ -1,17 +1,14 @@
 ;---------------------------------------------------
-; \file  bitsXX.inc
+; \file  data16.inc
 ; \note  (c) 2025 by Jens Kallup - paule32
 ;        all rights reserved.
 ;
 ; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
 ;---------------------------------------------------
-bits 64
-org 0
-default rel
+data16_start:
 
-%define IMAGEBASE    0x0000000140000000
-%define FILEALIGN    0x200
-%define SECTALIGN    0x1000
+counter:    dq 0                  ; 8-Byte Zähler (initial 0)
+greeting:   db "Hallo, Welt!",0   ; änderbarer String
+buffer256:  times 256 db 0
 
-%define IMAGE_BASE   IMAGEBASE
-%define ALIGN_UP(x,a) (((x)+(a)-1)/(a))*(a)
+data16_end:
