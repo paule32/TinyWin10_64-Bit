@@ -1,1 +1,1 @@
-nasm -o start.exe start.asm
+nasm -f bin -o start.exe start.asm

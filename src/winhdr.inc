@@ -1,109 +1,82 @@
-;---------------------------------------------------
-; NT-Header
-;---------------------------------------------------
-
+; -----------------------------------------------------------------------------
+; \file  winhdr.inc
+; \note  (c) 2025 by Jens Kallup - paule32
+;        all rights reserved.
+;
+; \desc  Create a tiny MS-Windows 11 64-bit Pro EXE.
+; -----------------------------------------------------------------------------
+; PE-Header (PE32+) + Optional Header + Section Table
+; -----------------------------------------------------------------------------
+bits 64
+org 0
 pe_header:
-    db 'P','E',0,0                      ; Signature
+    db 'P','E',0,0                 ; "PE\0\0"
 
-    ; File Header
-    dw 0x8664                           ; Machine = AMD64
-    dw 2                                ; NumberOfSections
-    dd 0                                ; TimeDateStamp
-    dd 0,0                              ; PointerToSymbolTable, NumberOfSymbols
-    dw 0xF0                             ; SizeOfOptionalHeader
-    dw 0x023                            ; Characteristics (EXECUTABLE|LAA)
+    ; COFF
+    dw 0x8664                      ; AMD64
+    dw 3                           ; Sections: .text, .idata, .data
+    dd 0,0,0
+    dw 0x00F0                      ; SizeOfOptionalHeader (PE32+)
+    dw 0x0022                      ; EXECUTABLE|LAA  (Relocs stripped lassen wir weg)
 
-%define SIZEOF_HEADERS ALIGN_UP(headers_end - $$, FILEALIGN)
-
-%define TEXT_VA        ALIGN_UP(headers_end - $$, SECTALIGN)
-%define TEXT_RAW_PTR   SIZEOF_HEADERS
-%define TEXT_VSIZE     (section_text_end - section_text_start)
-%define TEXT_RAW_SIZE  ALIGN_UP(TEXT_VSIZE, FILEALIGN)
-%define TEXT_VSIZE_AL  ALIGN_UP(TEXT_VSIZE, SECTALIGN)
-
-%define IDATA_RAW_PTR  ALIGN_UP(TEXT_RAW_PTR + TEXT_RAW_SIZE, FILEALIGN)
-%define IDATA_VA       ALIGN_UP(TEXT_VA + TEXT_VSIZE_AL, SECTALIGN)
-%define IDATA_VSIZE    (idata_end - idata_start)
-%define IDATA_RAW_SIZE ALIGN_UP(IDATA_VSIZE, FILEALIGN)
-%define IDATA_VSIZE_AL ALIGN_UP(IDATA_VSIZE, SECTALIGN)
-
-%define SIZEOF_IMAGE   ALIGN_UP(IDATA_VA + IDATA_VSIZE_AL, SECTALIGN)
-
-%define RVA_TEXT(lbl)  (TEXT_VA  + ((lbl)  - section_text_start))
-%define RVA_IDATA(lbl) (IDATA_VA + ((lbl)  - idata_start))
+%include 'precalc.asm'
 
     ; Optional Header (PE32+)
-    dw 0x20B                            ; Magic = PE32+
-    db 0,0                              ; LinkerVersion
-    dd TEXT_RAW_SIZE                    ; SizeOfCode
-    dd IDATA_RAW_SIZE                   ; SizeOfInit
-    dd 0                                ; UninitData
-    dd RVA_TEXT(_start)                 ; AddressOfEntryPoint
-    dd TEXT_VA                          ; BaseOfCode
-    dq IMAGEBASE                        ; ImageBase
-    dd SECTALIGN                        ; SectionAlignment
-    dd FILEALIGN                        ; FileAlignment
-    dw 6,0                              ; OS Version
-    dw 0,0                              ; Image Version
-    dw 6,0                              ; Subsystem Version
-    dd 0                                ; Win32VersionValue
-    dd SIZEOF_IMAGE                     ; SizeOfImage (Header + 1 Section)
-    dd SIZEOF_HEADERS                   ; SizeOfHeaders
-    dd 0                                ; CheckSum
-    dw 3                                ; Subsystem = CUI
-    dw 0x0100                           ; DllCharacteristics
-    dq 0x100000                         ; SizeOfStackReserve
-    dq 0x1000                           ; SizeOfStackCommit
-    dq 0x100000                         ; SizeOfHeapReserve
-    dq 0x1000                           ; SizeOfHeapCommit
-    dd 0                                ; LoaderFlags
-    dd 16                               ; NumberOfRvaAndSizes
+    dw 0x020B                      ; Magic
+    db 0,0
+    dd TEXT_RAW_SIZE               ; SizeOfCode
+    dd IDATA_RAW_SIZE + DATA_RAW_SIZE ; SizeOfInitializedData
+    dd 0                           ; BSS
+    dd RVA_TEXT(_start)            ; EntryPoint
+    dd TEXT_VA                     ; BaseOfCode
+    dq IMAGE_BASE                  ; ImageBase
+    dd SECTALIGN                   ; SectionAlignment
+    dd FILEALIGN                   ; FileAlignment
+    dw 6,0                         ; OS Version
+    dw 0,0                         ; Image Version
+    dw 6,0                         ; Subsystem Version
+    dd 0
+    dd SIZEOF_IMAGE                ; SizeOfImage
+    dd SIZEOF_HEADERS              ; SizeOfHeaders
+    dd 0                           ; Checksum
+    dw 2                           ; Subsystem = Windows GUI
+    dw 0x0100                      ; DllCharacteristics: NXCompat (kein ASLR)
+    dq 0x0000000000100000          ; Stack Reserve
+    dq 0x0000000000001000          ; Stack Commit
+    dq 0x0000000000100000          ; Heap Reserve
+    dq 0x0000000000001000          ; Heap Commit
+    dd 0
+    dd 16
 
     ; Data Directories
-    ; 0 Export
-    dd 0,0
-    ; 1 Import
-    dd RVA_IDATA(import_dir), (import_dir_end - import_dir)
-    ; 2 Resource
-    dd 0,0
-    ; 3 Exception
-    dd 0,0
-    ; 4 Security
-    dd 0,0
-    ; 5 Base Reloc (no references)
-    dd 0,0
-    ; 6 Debug
-    dd 0,0
-    ; 7 Archicteure
-    dd 0,0
-    ; 8 Global Ptr
-    dd 0,0
-    ; 9 TLS
-    dd 0,0
-    ; 10 Load Config
-    dd 0,0
-    ; 11 Bound Import
-    dd 0,0
-    ; 12 IAT
-    dd RVA_IDATA(iat_start), (iat_end - iat_start)
-    ; 13 Delay Import
-    dd 0,0
-    ; 14 COM Descriptor
-    dd 0,0
-    ; 15 Reserved
-    dd 0,0
+    dd 0,0                         ; 0 Export
+    dd RVA_IDATA(import_dir), (import_dir_end - import_dir) ; 1 Import
+    dd 0,0                         ; 2 Resource
+    dd 0,0                         ; 3 Exception
+    dd 0,0                         ; 4 Security
+    dd 0,0                         ; 5 Base Reloc
+    dd 0,0                         ; 6 Debug
+    dd 0,0                         ; 7 Architecture
+    dd 0,0                         ; 8 Global Ptr
+    dd 0,0                         ; 9 TLS
+    dd 0,0                         ; 10 Load Config
+    dd 0,0                         ; 11 Bound Import
+    dd RVA_IDATA(iat_start), (iat_end - iat_start)          ; 12 IAT
+    dd 0,0                         ; 13 Delay Import
+    dd 0,0                         ; 14 COM
+    dd 0,0                         ; 15 Reserved
 
-    ; Section Header (.text)
-    db '.text',0,0,0                     ; Name
-    dd TEXT_VSIZE                        ; VirtualSize
-    dd TEXT_VA                           ; VirtualAddress
-    dd TEXT_RAW_SIZE                     ; SizeOfRawData
-    dd TEXT_RAW_PTR                      ; PointerToRawData
-    dd 0,0                               ; Reloc/Linenum
+    ; Section .text
+    db '.text',0,0,0
+    dd TEXT_VSIZE
+    dd TEXT_VA
+    dd TEXT_RAW_SIZE
+    dd TEXT_RAW_PTR
+    dd 0,0
     dw 0,0
-    dd 0xE0000020                        ; Characteristics: CODE|EXEC|READ|WRITE
-    
-    ; --- Section Table: .idata
+    dd 0x60000020                  ; CODE|EXECUTE|READ
+
+    ; Section .idata
     db '.idata',0,0
     dd IDATA_VSIZE
     dd IDATA_VA
@@ -111,12 +84,16 @@ pe_header:
     dd IDATA_RAW_PTR
     dd 0,0
     dw 0,0
-    dd 0xC0000040                        ; INIT_DATA|READ|WRITE
+    dd 0xC0000040                  ; INIT_DATA|READ|WRITE
 
+    ; --- Section Table (.data)
+    db '.data',0,0,0
+    dd DATA_VSIZE
+    dd DATA_VA
+    dd DATA_RAW_SIZE
+    dd DATA_RAW_PTR
+    dd 0,0
+    dw 0,0
+    dd 0xC0000040      ; READ | WRITE | INIT_DATA
+    
 headers_end:
-
-;---------------------------------------------------
-; Align bis zum Section-Start (0x200)
-;---------------------------------------------------
-times (TEXT_RAW_PTR - ($ - $$)) db 0
-
