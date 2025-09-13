@@ -127,6 +127,10 @@ __DIR %+ _end:
 %pop
 %endmacro
 
-%macro Return 1
+%macro Return 0-1
+%if %0 == 1
     mov eax, %1
+%else
+    ret
+%endif
 %endmacro

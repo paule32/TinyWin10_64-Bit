@@ -9,16 +9,43 @@
 ; -----------------------------------------------------------------------------
 ; user32.dll functions ...
 ; -----------------------------------------------------------------------------
-%define USER32_FUNCS \
-    RegisterClassExW, CreateWindowExW, DefWindowProcW, \
-    ShowWindow, UpdateWindow, GetMessageW, TranslateMessage, \
-    DispatchMessageW, PostQuitMessage, LoadCursorW, \
-    MessageBoxA, MessageBoxW, GetSysColorBrush, \
-    GetClassLongPtrW, GetClientRect, FillRect
+%define USER32_FUNCS        \
+    CreateWindowExW,        \
+                            \
+    DefWindowProcW,         \
+    DispatchMessageW,       \
+                            \
+    FillRect,               \
+                            \
+    GetClassLongPtrW,       \
+    GetClientRect,          \
+    GetMessageW,            \
+    GetSysColorBrush,       \
+                            \
+    LoadCursorW,            \
+                            \
+    MessageBoxA,            \
+    MessageBoxW,            \
+                            \
+    RegisterClassExW,       \
+                            \
+    ShowWindow,             \
+                            \
+    PostQuitMessage,        \
+                            \
+    TranslateMessage,       \
+                            \
+    UpdateWindow
+    
 ; -----------------------------------------------------------------------------
 ; kernel32.dll functions ...
 ; -----------------------------------------------------------------------------
-%define KERNEL32_FUNCS \
-    ExitProcess, \
-    GetModuleHandleW, \
-    GetLastError
+%define KERNEL32_FUNCS      \
+    ExitProcess,            \
+                            \
+    GetLastError,           \
+    GetModuleHandleW,       \
+    GetProcAddress,         \
+                            \
+    LoadLibraryA
+    

@@ -113,6 +113,25 @@ _start:
     ExitProcess 0
 
 ; -----------------------------------------------------------------------------
+resolve_by_ordinal:
+    nop
+    AddShadow 40
+    ; HMODULE h = LoadLibraryA("user32.dll");
+    lea     rcx, [rel dll_win32_user32]
+    CALL_IAT LoadLibraryA
+    mov     r12, rax                ; r12 = HMODULE(user32)
+    
+    ; FARPROC p = GetProcAddress(h, (LPCSTR)ORD_MB);
+    mov     rcx, r12
+    mov     edx, 0x00E8             ; Beispiel-Ordinal (HEX!) -> nur Platzhalter!
+    CALL_IAT GetProcAddress
+    mov     rbx, rax                ; rbx = &MessageBoxW
+    
+    DelShadow 40
+    Return
+    nop
+    
+; -----------------------------------------------------------------------------
 ; konstante Wide-Strings in .text (read-only)
 ; -----------------------------------------------------------------------------
 winclassW:  WSTR "NasmWndClass"
